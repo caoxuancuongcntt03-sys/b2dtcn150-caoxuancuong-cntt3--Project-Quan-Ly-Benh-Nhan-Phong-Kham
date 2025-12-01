@@ -253,7 +253,7 @@ void f01_addPatient() {
             clearInputBuffer();
             p.debt = 0.0; 
         } else if (p.debt <= 0.0) { 
-            printf("Loi: Cong no phai **lon hon 0**. Vui long nhap lai.\n");
+            printf("Loi: Cong no phai lon hon 0. Vui long nhap lai.\n");
         }
     } while (p.debt <= 0.0); 
     clearInputBuffer();
@@ -303,7 +303,7 @@ void f02_updatePatient() {
             strcpy(patients[idx].phone, phone_buffer);
             break;
         } else {
-            printf("Loi: SDT khong hop le. Vui long chi nhap **10 hoac 11 chu so** (co the kem dau + o dau).\n");
+            printf("Loi: SDT khong hop le. Vui long chi nhap 10 hoac 11 chu so (co the kem dau + o dau).\n");
         }
     }
 
@@ -311,7 +311,7 @@ void f02_updatePatient() {
     bool validDebtInput = false;
 
     do {
-        printf("Nhap Cong no moi (nhap **-1** de giu nguyen: %.3lf). Cong no moi phai **> 0** (neu cap nhat): ", patients[idx].debt);
+        printf("Nhap Cong no moi (nhap -1 de giu nguyen: %.3lf). Cong no moi phai > 0 (neu cap nhat): ", patients[idx].debt);
         if (scanf("%lf", &newDebt) != 1) {
             printf("Loi: Dau vao Cong no khong hop le. Giu nguyen.\n");
             clearInputBuffer();
@@ -325,7 +325,7 @@ void f02_updatePatient() {
             patients[idx].debt = newDebt;
             validDebtInput = true;
         } else {
-            printf("Loi: Cong no moi phai **lon hon 0**. Nhap -1 de giu nguyen cong no cu.\n");
+            printf("Loi: Cong no moi phai lon hon 0. Nhap -1 de giu nguyen cong no cu.\n");
         }
     } while (!validDebtInput);
 
@@ -656,4 +656,5 @@ int main() {
         }
     }
     return 0;
+
 }
