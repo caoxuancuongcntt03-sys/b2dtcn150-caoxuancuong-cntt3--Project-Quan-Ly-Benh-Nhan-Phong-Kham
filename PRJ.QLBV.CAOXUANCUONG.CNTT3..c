@@ -1,13 +1,12 @@
-//Cao Xuan Cuong -CNTT03-Project Quan Ly Benh Nhan Phong Kham .
+//Cao Xuan Cuong -CNTT03-Project Quan Ly Benh Nhau Phong Kham .
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <stdbool.h>
-
 #define MAX_PATIENTS 100
 #define MAX_RECORDS 500
-#define PATIENTS_PER_PAGE 2
+#define PATIENTS_PER_PAGE 4
 #define DEFAULT_FEE 100000.0
 
 typedef struct {
@@ -42,11 +41,24 @@ void removeNewline(char* str) {
     }
 }
 
+bool containsDigit(const char* str) {
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (isdigit((unsigned char)str[i])) { 
+            return true;
+        }
+    }
+    return false;
+}
+
 bool is_leap(int year) {
     return (year % 400 == 0) || (year % 4 == 0 && year % 100 != 0);
 }
 
 bool is_valid_date(int day, int month, int year) {
+    if (year > 2025) { 
+        return false;
+    }
+    
     if (year < 1 || month < 1 || month > 12 || day < 1) {
         return false;
     }
@@ -146,6 +158,7 @@ void deleteRelatedRecords(char* cardId) {
 }
 
 void initializeDefaultData() {
+    // 4 Bệnh nhân mẫu ban đầu (BN01 - BN04)
     strcpy(patients[pCount].cardId,"BN01");
     strcpy(patients[pCount].name, "Nguyen Nhu Quynh");
     strcpy(patients[pCount].phone, "0912345678");
@@ -174,6 +187,35 @@ void initializeDefaultData() {
     patients[pCount].visitDays = 1;
     pCount++;
 
+    // 4 Bệnh nhân MỚI (BN05 - BN08)
+    strcpy(patients[pCount].cardId, "BN05");
+    strcpy(patients[pCount].name, "Le Van An");
+    strcpy(patients[pCount].phone, "0868888888");
+    patients[pCount].debt = 300000.0;
+    patients[pCount].visitDays = 2; 
+    pCount++;
+
+    strcpy(patients[pCount].cardId, "BN06");
+    strcpy(patients[pCount].name, "Hoang Thi Thao");
+    strcpy(patients[pCount].phone, "0977777777");
+    patients[pCount].debt = 75000.0;
+    patients[pCount].visitDays = 1; 
+    pCount++;
+    
+    strcpy(patients[pCount].cardId, "BN07");
+    strcpy(patients[pCount].name, "Nguyen Van Chung");
+    strcpy(patients[pCount].phone, "0383333333");
+    patients[pCount].debt = 40000.0;
+    patients[pCount].visitDays = 0; 
+    pCount++;
+
+    strcpy(patients[pCount].cardId, "BN08");
+    strcpy(patients[pCount].name, "Bui Duc Duy");
+    strcpy(patients[pCount].phone, "0909090909");
+    patients[pCount].debt = 150000.0;
+    patients[pCount].visitDays = 3; 
+    pCount++;
+    
     strcpy(records[rCount].recId, "REC001");
     strcpy(records[rCount].cardId, "BN01");
     strcpy(records[rCount].date, "10/11/2025");
@@ -196,6 +238,42 @@ void initializeDefaultData() {
     strcpy(records[rCount].cardId, "BN04");
     strcpy(records[rCount].date, "01/10/2025");
     strcpy(records[rCount].status, "Theo Doi");
+    rCount++;
+    
+    strcpy(records[rCount].recId, "REC005");
+    strcpy(records[rCount].cardId, "BN05");
+    strcpy(records[rCount].date, "05/11/2025");
+    strcpy(records[rCount].status, "Tai Kham");
+    rCount++;
+    
+    strcpy(records[rCount].recId, "REC006");
+    strcpy(records[rCount].cardId, "BN05");
+    strcpy(records[rCount].date, "15/11/2025");
+    strcpy(records[rCount].status, "Theo Doi");
+    rCount++;
+
+    strcpy(records[rCount].recId, "REC007");
+    strcpy(records[rCount].cardId, "BN06");
+    strcpy(records[rCount].date, "02/12/2025");
+    strcpy(records[rCount].status, "Kham Moi");
+    rCount++;
+
+    strcpy(records[rCount].recId, "REC008");
+    strcpy(records[rCount].cardId, "BN08");
+    strcpy(records[rCount].date, "01/01/2025");
+    strcpy(records[rCount].status, "Tai Kham");
+    rCount++;
+    
+    strcpy(records[rCount].recId, "REC009");
+    strcpy(records[rCount].cardId, "BN08");
+    strcpy(records[rCount].date, "10/01/2025");
+    strcpy(records[rCount].status, "Theo Doi");
+    rCount++;
+    
+    strcpy(records[rCount].recId, "REC010");
+    strcpy(records[rCount].cardId, "BN08");
+    strcpy(records[rCount].date, "20/01/2025");
+    strcpy(records[rCount].status, "Tai Kham");
     rCount++;
 }
 
@@ -229,8 +307,10 @@ void f01_addPatient() {
         fgets(p.name, 50, stdin); removeNewline(p.name);
         if (strlen(p.name) == 0) {
             printf("Loi: Ho ten khong duoc de trong.\n");
+        } else if (containsDigit(p.name)) { 
+            printf("Loi: Ho ten khong duoc chua ky tu so. Vui long nhap lai.\n");
         }
-    } while (strlen(p.name) == 0);
+    } while (strlen(p.name) == 0 || containsDigit(p.name));
 
     char phone_buffer[15]; 
     do {
@@ -282,9 +362,16 @@ void f02_updatePatient() {
     while (1) {
         printf("Nhap Ten moi (Enter de giu nguyen: %s): ", patients[idx].name);
         fgets(buffer, 50, stdin); removeNewline(buffer);
+        
         if (strlen(buffer) == 0) {
-            break;
+            break; 
         }
+        
+        if (containsDigit(buffer)) {
+            printf("Loi: Ho ten khong duoc chua ky tu so. Vui long nhap lai.\n");
+            continue; 
+        }
+        
         if (strlen(buffer) > 0) {
             strcpy(patients[idx].name, buffer);
             break;
@@ -311,7 +398,7 @@ void f02_updatePatient() {
     bool validDebtInput = false;
 
     do {
-        printf("Nhap Cong no moi (nhap -1 de giu nguyen: %.3lf). Cong no moi phai > 0 (neu cap nhat): ", patients[idx].debt);
+        printf("Nhap Cong no moi (nhap -1 de giu nguyen: %.3lf). Cong no moi phai **> 0** (neu cap nhat): ", patients[idx].debt);
         if (scanf("%lf", &newDebt) != 1) {
             printf("Loi: Dau vao Cong no khong hop le. Giu nguyen.\n");
             clearInputBuffer();
@@ -460,7 +547,7 @@ void f05_searchPatient() {
     lowerQuery[strlen(query)] = '\0';
 
     int foundCount = 0;
-    printf("\n================================= DANH SACH BENH NHAN  =====================================\n");
+    printf("\n================================= DANH SACH BENH NHAN  =====================================\n");
     printf("| %-8s | %-20s | %-15s | %-12s | %-9s |\n",
               "CardID", "Ho Ten", "Dien Thoai", "Cong No", "Luot Kham");
     printf("+----------+----------------------+-----------------+--------------+-----------+\n");
@@ -563,7 +650,11 @@ void f07_addRecord() {
                 dateValid = true;
             }
         } else {
-            printf("=> LOI: Ngay thang nam khong hop le (%s). Vui long nhap lai.\n", date);
+            if (year > 2025) {
+                 printf("=> LOI: Nam kham khong hop le (%d). Chi duoc nhap nam 2025 tro ve truoc.\n", year);
+            } else {
+                printf("=> LOI: Ngay thang nam khong hop le (dinh dang hoac so ngay/thang sai: %s). Vui long nhap lai.\n", date);
+            }
         }
     } while (!dateValid);
 
@@ -586,7 +677,7 @@ void f07_addRecord() {
 
 void f08_listPatientHistory() {
     char id[10];
-    printf("\n--- F08: XEM LICH SU KHAM BENH ---\n");
+    printf("\n--- F08:XEM LICH SU KHAM BENH ---\n");
     printf("Nhap cardId benh nhan can xem: ");
     fgets(id, 10, stdin); removeNewline(id);
 
@@ -616,20 +707,27 @@ void printMenu() {
 
 int main() {
     int choice;
+    char input_buffer[10]; 
 
     initializeDefaultData();
     printf(">> Khoi dong lan dau. Da nap %d benh nhan mau va %d luot kham mau.\n", pCount, rCount);
 
     while (1){
         printMenu();
-
-        if (scanf("%d", &choice) != 1) {
-            printf("Dau vao khong hop le. Vui long nhap so.\n");
-            clearInputBuffer();
+        if (fgets(input_buffer, 10, stdin) == NULL) {
+             printf("Loi: Dau vao bi huy.\n");
+             continue;
+        }
+        removeNewline(input_buffer);
+        
+        if (strlen(input_buffer) == 0) {
+            printf(" Loi: Lua chon menu khong duoc de trong. Vui long nhap lai.\n");
             continue;
         }
-
-        clearInputBuffer();
+        if (sscanf(input_buffer, "%d", &choice) != 1) {
+            printf("Loi: Dau vao khong hop le. Vui long nhap mot so.\n");
+            continue;
+        }
 
         switch (choice) {
             case 1: f01_addPatient();
@@ -656,5 +754,4 @@ int main() {
         }
     }
     return 0;
-
 }
